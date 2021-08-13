@@ -85,7 +85,7 @@ for line in csv_list.readlines():
 
 if len(redirect_in_error) > 0:
     print
-    print('Summary:')
+    print('\nErrors summary:')
 
     for redirect in redirect_in_error:
         print(redirect)
