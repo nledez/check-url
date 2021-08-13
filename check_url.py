@@ -37,34 +37,34 @@ def check_http(url, http_expectation):
         print('{} ✅ => {}'.format(url, http_got))
         return False
 
-
-def check_ssh(hostname, user, private_key, command='hostname'):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    client.connect(hostname,
-                   username=user,
-                   key_filename=private_key)
-
-    chan = client.get_transport().open_session()
-    chan.exec_command(command)
-    key = True
-    while key:
-        if chan.recv_ready():
-            print("recv:\n%s" % chan.recv(4096).decode('ascii'))
-        if chan.recv_stderr_ready():
-            print("error:\n%s" % chan.recv_stderr(4096).decode('ascii'))
-        if chan.exit_status_ready():
-            print("exit status: %s" % chan.recv_exit_status())
-            key = False
-            client.close()
-
-    client.close()
-
+## Example for ssh
+## ===============
+#def check_ssh(hostname, user, private_key, command='hostname'):
+#    client = paramiko.SSHClient()
+#    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#
+#    client.connect(hostname,
+#                   username=user,
+#                   key_filename=private_key)
+#
+#    chan = client.get_transport().open_session()
+#    chan.exec_command(command)
+#    key = True
+#    while key:
+#        if chan.recv_ready():
+#            print("recv:\n%s" % chan.recv(4096).decode('ascii'))
+#        if chan.recv_stderr_ready():
+#            print("error:\n%s" % chan.recv_stderr(4096).decode('ascii'))
+#        if chan.exit_status_ready():
+#            print("exit status: %s" % chan.recv_exit_status())
+#            key = False
+#            client.close()
+#
+#    client.close()
+#
+# result = check_ssh('ssh-host', 'user', 'ssh-private-key')
 
 redirect_in_error = []
-
-# result = check_ssh('ssh-host', 'user', 'ssh-private-key')
 
 if len(sys.argv) >= 2:
     file_to_check = sys.argv[1]
@@ -78,6 +78,7 @@ except IOError:
     sys.exit(1)
 
 for line in csv_list.readlines():
+    print('\n')
     (url, http_expected) = line.rstrip().split(';')
     redirects = check_http(url, http_expected)
     if redirects:
@@ -85,7 +86,7 @@ for line in csv_list.readlines():
 
 if len(redirect_in_error) > 0:
     print
-    print('Summary:')
+    print('\n\nSummary, list of errors:\n========')
 
     for redirect in redirect_in_error:
         print(redirect)
